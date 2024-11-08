@@ -101,35 +101,44 @@ function filterMoves(array, previousMovesArray = []) {
 }
 
 function moveKnight(start, end, positionsVisited = []) {
+  let localPosVisited = positionsVisited.slice();
+  console.log("");
   console.log(
-    `----- moveKnight starts. start: ${start} | end: ${end} --- positions visited is: ${positionsVisited}`
+    `----- moveKnight starts. start: ${start} | end: ${end} --- localpositions visited is: ${localPosVisited}`
   );
-  // base case
+  // base case - Does is our start x,y now the same as our end x,y? If so, do this.
   if (start[0] === end[0] && start[1] === end[1]) {
     console.log("Yay we made it! 😃");
     console.log(`Our path was:`);
     console.log(positionsVisited);
     console.log(`Which was reached in ${positionsVisited.length} steps`);
-    positionsVisited.pop(); // Think about this...
     return;
   }
 
-  // Add the current position to the visited positions
-  positionsVisited.push(start);
+  // Add the current position to the local visited positions
+  localPosVisited.push(start);
 
   // recursive case
-  let validMoves = returnValidMoves(start, positionsVisited);
+  let validMoves = returnValidMoves(start, localPosVisited);
 
   // If, within the list of valid moves we find our end destination, recall the function to reach the base case
   for (let move of validMoves) {
     if (move[0] === end[0] && move[1] === end[1]) {
-      moveKnight([move[0], move[1]], end, positionsVisited);
+      console.log(`     ||| Found endpoint in next move! ||| `);
+      moveKnight([move[0], move[1]], end, localPosVisited);
       return;
     }
   }
   // Otherwise, for each valid move of valid moves recall moveKnight
   for (let move of validMoves) {
-    moveKnight([move[0], move[1]], end, positionsVisited);
+    console.log(`Didn't find next move in list of valid moves`);
+    console.log(
+      `Running moveKnight again with start: ${[
+        move[0],
+        move[1],
+      ]} | localPosVisited: ${localPosVisited}`
+    );
+    moveKnight([move[0], move[1]], end, localPosVisited);
   }
 }
 
