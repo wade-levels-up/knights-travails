@@ -7,33 +7,26 @@ function returnValidMoves(currentPosition) {
   let [x, y] = currentPosition;
 }
 
-function calculateMove(currentPosition) {
+function calculateMoves(currentPosition) {
   let [x, y] = currentPosition;
   let movelist = [
     [2, 1],
     [-2, 1],
     [2, -1],
     [-2, -1],
+    [1, 2],
+    [-1, 2],
+    [1, -2],
+    [-1, -2],
   ];
-  let moves = movelist[Math.floor(Math.random() * 4)];
-  let coinflip = Math.floor(Math.random() * 2 + 1);
-  if (coinflip === 1) {
-    x += moves.pop();
-    y += moves.pop();
+  let modifiedMoves = [];
+  for (let move of movelist) {
+    modifiedMoves.push([(x += move[0]), (y += move[1])]);
+    [x, y] = currentPosition;
   }
-  if (coinflip === 2) {
-    y += moves.pop();
-    x += moves.pop();
-  }
-  if (x < 0 || y < 0 || x > 7 || y > 7) {
-    console.log(
-      `Recurring cause x or y broke board bounds - x: ${x} | y: ${y}`
-    );
-    [x, y] = calculateMove(currentPosition);
-  }
-  return [x, y];
+  return modifiedMoves;
 }
 
 knightMoves([0, 0], [7, 7]);
 returnValidMoves([0, 0]);
-console.log(calculateMove([7, 7]));
+console.log(calculateMoves([2, 1]));
