@@ -2,9 +2,13 @@ function knightMoves(start, finish) {
   let currentPosition = start;
 }
 
-function returnValidMoves(currentPosition) {
-  let validMoves = [];
+function returnValidMoves(currentPosition, previousPositions) {
   let [x, y] = currentPosition;
+  let validMoves = filterMoves(
+    calculateMoves(currentPosition),
+    previousPositions
+  );
+  return validMoves;
 }
 
 function calculateMoves(currentPosition) {
@@ -25,31 +29,36 @@ function calculateMoves(currentPosition) {
     [x, y] = currentPosition;
   }
 
-  function filterMoves(array) {
-    let filteredArray = array;
-    console.table(filteredArray);
-    for (let i = 0; i < array.length; i++) {
-      if (filteredArray[i][0] < 0 || filteredArray[i][0] > 7) {
-        console.log(
-          `x: ${filteredArray[i][0]} was less than 0 or greater than 7`
-        );
-        filteredArray.splice(i, 1);
-        i--;
-      }
-      if (filteredArray[i][1] < 0 || filteredArray[i][1] > 7) {
-        console.log(
-          `y: ${filteredArray[i][1]} was less than 0 or greater than 7`
-        );
+  return modifiedMoves;
+}
+
+function filterMoves(array, previousMovesArray = []) {
+  let filteredArray = array;
+
+  for (let i = 0; i < array.length; i++) {
+    // Check if x coordinate is within board boundaries, if not remove the move containing it
+    if (filteredArray[i][0] < 0 || filteredArray[i][0] > 7) {
+      filteredArray.splice(i, 1);
+      i--;
+    }
+    // Check if y coordinate is within board boundaries, if not remove the move containing it
+    if (filteredArray[i][1] < 0 || filteredArray[i][1] > 7) {
+      filteredArray.splice(i, 1);
+      i--;
+    }
+    // Loop through previous moves, if found remove them
+    for (let prevMove of previousMovesArray) {
+      if (
+        prevMove[0] === filteredArray[i][0] &&
+        prevMove[1] === filteredArray[i][1]
+      ) {
         filteredArray.splice(i, 1);
         i--;
       }
     }
-    return filteredArray;
   }
 
-  return filterMoves(modifiedMoves);
+  return filteredArray;
 }
 
-knightMoves([0, 0], [7, 7]);
-returnValidMoves([0, 0]);
-console.log(calculateMoves([2, 1]));
+console.log(returnValidMoves([3, 3], [[2, 1]]));
