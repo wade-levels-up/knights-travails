@@ -35,84 +35,102 @@ function calculateMoves(currentPosition) {
   return modifiedMoves;
 }
 
+// function filterMoves(array, previousMovesArray = []) {
+//   let filteredArray = array;
+
+//   for (let i = 0; i < array.length; i++) {
+//     // Check if x coordinate is within board boundaries, if not remove the move containing it
+//     console.log(`x: ${filteredArray[i][0]} y: ${filteredArray[i][1]}`);
+//     if (filteredArray[i]) {
+//       if (filteredArray[i][0] < 0 || filteredArray[i][0] > 7) {
+//         filteredArray.splice(i, 1);
+//         i--;
+//       }
+//     }
+//     // Check if y coordinate is within board boundaries, if not remove the move containing it
+//     if (filteredArray[i]) {
+//       if (filteredArray[i][1] < 0 || filteredArray[i][1] > 7) {
+//         filteredArray.splice(i, 1);
+//         i--;
+//       }
+//     }
+//     // Loop through previous moves, if found remove them
+//     if (filteredArray[i]) {
+//       console.log(`Here's a vermin: ${filteredArray[i]}`);
+//       for (let prevMove of previousMovesArray) {
+//         if (
+//           prevMove[0] === filteredArray[i][0] &&
+//           prevMove[1] === filteredArray[i][1]
+//         ) {
+//           filteredArray.splice(i, 1);
+//           i--;
+//         }
+//       }
+//     }
+//   }
+
+//   return filteredArray;
+// }
+
 function filterMoves(array, previousMovesArray = []) {
-  let filteredArray = array;
+  let filteredArray = [];
+  let prevMoves = previousMovesArray;
+  let furtherFilteredArr = [];
 
   for (let i = 0; i < array.length; i++) {
-    // Check if x coordinate is within board boundaries, if not remove the move containing it
-    if (filteredArray[i][0] < 0 || filteredArray[i][0] > 7) {
-      filteredArray.splice(i, 1);
-      i--;
-    }
-    // Check if y coordinate is within board boundaries, if not remove the move containing it
-    if (filteredArray[i][1] < 0 || filteredArray[i][1] > 7) {
-      filteredArray.splice(i, 1);
-      i--;
-    }
-    // Loop through previous moves, if found remove them
-    for (let prevMove of previousMovesArray) {
-      if (
-        prevMove[0] === filteredArray[i][0] &&
-        prevMove[1] === filteredArray[i][1]
-      ) {
-        filteredArray.splice(i, 1);
-        i--;
-      }
+    // Check if x and y coordinates are within board boundaries, if so push it to filteredArray
+    // console.log(`x: ${array[i][0]} y: ${array[i][1]}`);
+    if (
+      array[i][0] >= 0 &&
+      array[i][0] <= 7 &&
+      array[i][1] >= 0 &&
+      array[i][1] <= 7
+    ) {
+      filteredArray.push(array[i]);
     }
   }
 
-  return filteredArray;
+  for (let filteredMove of filteredArray) {
+    for (let move of prevMoves) {
+      if (move[0] !== filteredMove[0] && move[1] !== filteredMove[1]) {
+        furtherFilteredArr.push(filteredMove);
+      }
+    }
+  }
+  return furtherFilteredArr;
 }
 
-// function hop(currentPosition, finalPosition, validMoveArray) {
-//   let vertex = currentPosition;
-//   while (vertex[0] !== finalPosition[0] && vertex[1] !== finalPosition[1]) {
-//     positionsVisited.push(vertex);
-//     console.log(positionsVisited);
-//     for (let move of validMoveArray) {
-//       vertex = returnValidMoves(move, positionsVisited);
-//     }
-//   }
-//   console.log("final destination reached");
-//   return vertex;
-// }
-
-function moveKnight(start, end) {
-  positionsVisited.push(start);
-  // Delete these later, just seeing what's going on
-  console.log(`--- Entered moveKnight function ---`);
-  console.log(`Our start value is: ${start} | Our end value is: ${end}`);
-  console.log(`At this point in time positionsVisited is:`);
-  console.log(positionsVisited);
-
+function moveKnight(start, end, positionsVisited = []) {
+  console.log(
+    `----- moveKnight starts. start: ${start} | end: ${end} --- positions visited is: ${positionsVisited}`
+  );
   // base case
   if (start[0] === end[0] && start[1] === end[1]) {
     console.log("Yay we made it! 😃");
     console.log(`Our path was:`);
     console.log(positionsVisited);
     console.log(`Which was reached in ${positionsVisited.length} steps`);
-    console.log(`⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️`);
+    positionsVisited.pop(); // Think about this...
     return;
   }
 
+  // Add the current position to the visited positions
+  positionsVisited.push(start);
+
   // recursive case
-  queue.push(start);
   let validMoves = returnValidMoves(start, positionsVisited);
-  console.log(`********** Valid moves are **********`);
-  console.log(validMoves);
-  console.log(`*************************************`);
+
   // If, within the list of valid moves we find our end destination, recall the function to reach the base case
   for (let move of validMoves) {
     if (move[0] === end[0] && move[1] === end[1]) {
-      moveKnight([move[0], move[1]], end);
+      moveKnight([move[0], move[1]], end, positionsVisited);
+      return;
     }
   }
   // Otherwise, for each valid move of valid moves recall moveKnight
   for (let move of validMoves) {
-    moveKnight([move[0], move[1]], end);
+    moveKnight([move[0], move[1]], end, positionsVisited);
   }
 }
 
-// console.log(returnValidMoves([6, 3], [[4, 2]]));
-// hop([0, 0], [7, 7], returnValidMoves([0, 0]));
 moveKnight([0, 0], [3, 3]);
