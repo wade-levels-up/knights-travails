@@ -24,7 +24,30 @@ function calculateMoves(currentPosition) {
     modifiedMoves.push([(x += move[0]), (y += move[1])]);
     [x, y] = currentPosition;
   }
-  return modifiedMoves;
+
+  function filterMoves(array) {
+    let filteredArray = array;
+    console.table(filteredArray);
+    for (let i = 0; i < array.length; i++) {
+      if (filteredArray[i][0] < 0 || filteredArray[i][0] > 7) {
+        console.log(
+          `x: ${filteredArray[i][0]} was less than 0 or greater than 7`
+        );
+        filteredArray.splice(i, 1);
+        i--;
+      }
+      if (filteredArray[i][1] < 0 || filteredArray[i][1] > 7) {
+        console.log(
+          `y: ${filteredArray[i][1]} was less than 0 or greater than 7`
+        );
+        filteredArray.splice(i, 1);
+        i--;
+      }
+    }
+    return filteredArray;
+  }
+
+  return filterMoves(modifiedMoves);
 }
 
 knightMoves([0, 0], [7, 7]);
