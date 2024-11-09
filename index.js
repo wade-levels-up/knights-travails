@@ -1,7 +1,8 @@
 let positionsVisited = [];
 let possiblePathways = [];
-let cycles = 0;
+let queue = [];
 let shortestPathFound = false;
+let counter = 0;
 
 function knightMoves(start, finish) {
   let currentPosition = start;
@@ -69,44 +70,58 @@ function filterMoves(array, previousMovesArray = []) {
   return furtherFilteredArr;
 }
 
-function moveKnight(start, end, positionsVisited = []) {
-  if (shortestPathFound) return;
-  let localPosVisited = positionsVisited.slice();
-
-  for (let pathway of possiblePathways) {
-    if (pathway && pathway.length < positionsVisited.length) {
-      return;
-    }
-  }
-
-  // Base case - Does is our start x,y now the same as our end x,y? If so, do this.
-  if (start[0] === end[0] && start[1] === end[1]) {
-    shortestPathFound = true;
-    localPosVisited.push(start);
-    console.log(`Our path was:`);
-    console.log(localPosVisited);
-    console.log(`Which was reached in ${localPosVisited.length - 1} steps`);
-    console.log("This is the shortest pathway possible");
-    possiblePathways.push(localPosVisited);
-    return;
-  }
-
-  // Add the current position to the local visited positions
-  localPosVisited.push(start);
-
-  let validMoves = returnValidMoves(start, localPosVisited);
-
-  // If, within the list of valid moves we find our end destination, recall the function to reach the base case
-  for (let move of validMoves) {
-    if (move[0] === end[0] && move[1] === end[1]) {
-      return moveKnight([move[0], move[1]], end, localPosVisited);
-    }
-  }
-  // Otherwise, for each valid move of valid moves recall moveKnight
-  for (let move of validMoves) {
-    moveKnight([move[0], move[1]], end, localPosVisited);
-  }
-  return;
+function moveKnight(start, end) {
+  // Queue of positions to explore, each with its path
+  // Create set of visited positions
+  // Create while loop
+  // If the current position is the end position, return the path
+  // Mark the current position as visited
+  // Get valid moves from the current position
+  // Filter valid moves to exclude positions already visited
+  // Add valid moves to the queue with their paths
+  // End while loop
 }
 
-moveKnight([7, 7], [0, 0]);
+// function moveKnight(start, end, positionsVisited = []) {
+//   if (shortestPathFound) return;
+//   let localPosVisited = positionsVisited.slice();
+//   // Add the current position to the local visited positions
+//   localPosVisited.push(start);
+//   // Collect array of valid moves from current position
+//   let validMoves = returnValidMoves(start, localPosVisited);
+
+//   for (let pathway of possiblePathways) {
+//     if (pathway && pathway.length < positionsVisited.length) {
+//       return;
+//     }
+//   }
+
+//   // Base case
+//   if (start[0] === end[0] && start[1] === end[1]) {
+//     shortestPathFound = true;
+//     console.log(`Our path was:`);
+//     console.log(localPosVisited);
+//     console.log(`Which was reached in ${localPosVisited.length - 1} steps`);
+//     console.log("This is the shortest pathway possible");
+//     possiblePathways.push(localPosVisited);
+//     return;
+//   }
+
+//   // Recursion case
+//   // If we find the end vertex in the list of valid moves move knight to it.
+//   for (let move of validMoves) {
+//     if (move[0] === end[0] && move[1] === end[1]) {
+//       return moveKnight([move[0], move[1]], end, localPosVisited);
+//     }
+//   }
+//   //
+
+//   // Otherwise, for each valid move of valid moves recall moveKnight
+//   for (let move of validMoves) {
+//     moveKnight([move[0], move[1]], end, localPosVisited);
+//   }
+//   return;
+// }
+
+// moveKnight([5, 5], [5, 6]); - Should be 3 steps
+moveKnight([0, 0], [3, 3]);
