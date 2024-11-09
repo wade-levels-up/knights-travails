@@ -1,13 +1,3 @@
-let positionsVisited = [];
-let possiblePathways = [];
-let queue = [];
-let shortestPathFound = false;
-let counter = 0;
-
-function knightMoves(start, finish) {
-  let currentPosition = start;
-}
-
 function returnValidMoves(currentPosition, previousPositions = []) {
   let [x, y] = currentPosition;
   let validMoves = filterMoves(
@@ -70,16 +60,36 @@ function filterMoves(array, previousMovesArray = []) {
   return furtherFilteredArr;
 }
 
-function moveKnight(start, end) {
-  // Queue of positions to explore, each with its path
-  // Create set of visited positions
-  // Create while loop
-  // If the current position is the end position, return the path
-  // Mark the current position as visited
-  // Get valid moves from the current position
-  // Filter valid moves to exclude positions already visited
-  // Add valid moves to the queue with their paths
-  // End while loop
+function knightMoves(start, end) {
+  let queue = [[start, [start]]];
+  let visited = [];
+
+  while (queue.length > 0) {
+    let [curPos, path] = queue.shift();
+
+    if (curPos[0] === end[0] && curPos[1] === end[1]) {
+      console.log("We made it!");
+    }
+
+    // Mark the current position as visited
+    visited.push([curPos, path]);
+
+    // Get valid moves from the current position
+    let validMoves = returnValidMoves(curPos);
+
+    // Filter valid moves to exclude positions already visited
+    validMoves.filter((move) => {
+      for (let pos of visited) {
+        if (move[0] === pos[0] && move[1] === pos[1]) {
+          return true;
+        }
+      }
+    });
+    for (let move of validMoves) {
+      queue.push([move, [path].push[move]]);
+      console.log(queue);
+    }
+  }
 }
 
 // function moveKnight(start, end, positionsVisited = []) {
@@ -124,4 +134,4 @@ function moveKnight(start, end) {
 // }
 
 // moveKnight([5, 5], [5, 6]); - Should be 3 steps
-moveKnight([0, 0], [3, 3]);
+knightMoves([3, 3], [5, 5]);
