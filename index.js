@@ -1,5 +1,7 @@
 let positionsVisited = [];
-let queue = [];
+let possiblePathways = [];
+let cycles = 0;
+let shortestPathFound = false;
 
 function knightMoves(start, finish) {
   let currentPosition = start;
@@ -35,51 +37,11 @@ function calculateMoves(currentPosition) {
   return modifiedMoves;
 }
 
-// function filterMoves(array, previousMovesArray = []) {
-//   let filteredArray = array;
-
-//   for (let i = 0; i < array.length; i++) {
-//     // Check if x coordinate is within board boundaries, if not remove the move containing it
-//     console.log(`x: ${filteredArray[i][0]} y: ${filteredArray[i][1]}`);
-//     if (filteredArray[i]) {
-//       if (filteredArray[i][0] < 0 || filteredArray[i][0] > 7) {
-//         filteredArray.splice(i, 1);
-//         i--;
-//       }
-//     }
-//     // Check if y coordinate is within board boundaries, if not remove the move containing it
-//     if (filteredArray[i]) {
-//       if (filteredArray[i][1] < 0 || filteredArray[i][1] > 7) {
-//         filteredArray.splice(i, 1);
-//         i--;
-//       }
-//     }
-//     // Loop through previous moves, if found remove them
-//     if (filteredArray[i]) {
-//       console.log(`Here's a vermin: ${filteredArray[i]}`);
-//       for (let prevMove of previousMovesArray) {
-//         if (
-//           prevMove[0] === filteredArray[i][0] &&
-//           prevMove[1] === filteredArray[i][1]
-//         ) {
-//           filteredArray.splice(i, 1);
-//           i--;
-//         }
-//       }
-//     }
-//   }
-
-//   return filteredArray;
-// }
-
 function filterMoves(array, previousMovesArray = []) {
   let filteredArray = [];
-  let prevMoves = previousMovesArray;
   let furtherFilteredArr = [];
 
   for (let i = 0; i < array.length; i++) {
-    // Check if x and y coordinates are within board boundaries, if so push it to filteredArray
-    // console.log(`x: ${array[i][0]} y: ${array[i][1]}`);
     if (
       array[i][0] >= 0 &&
       array[i][0] <= 7 &&
@@ -90,56 +52,61 @@ function filterMoves(array, previousMovesArray = []) {
     }
   }
 
+  // Filter out moves that have been visited
   for (let filteredMove of filteredArray) {
-    for (let move of prevMoves) {
-      if (move[0] !== filteredMove[0] && move[1] !== filteredMove[1]) {
-        furtherFilteredArr.push(filteredMove);
+    let isVisited = false;
+    for (let move of previousMovesArray) {
+      if (move[0] === filteredMove[0] && move[1] === filteredMove[1]) {
+        isVisited = true;
+        break;
       }
     }
+    if (!isVisited) {
+      furtherFilteredArr.push(filteredMove);
+    }
   }
+
   return furtherFilteredArr;
 }
 
 function moveKnight(start, end, positionsVisited = []) {
+  if (shortestPathFound) return;
   let localPosVisited = positionsVisited.slice();
-  console.log("");
-  console.log(
-    `----- moveKnight starts. start: ${start} | end: ${end} --- localpositions visited is: ${localPosVisited}`
-  );
-  // base case - Does is our start x,y now the same as our end x,y? If so, do this.
+
+  for (let pathway of possiblePathways) {
+    if (pathway && pathway.length < positionsVisited.length) {
+      return;
+    }
+  }
+
+  // Base case - Does is our start x,y now the same as our end x,y? If so, do this.
   if (start[0] === end[0] && start[1] === end[1]) {
-    console.log("Yay we made it! 😃");
+    shortestPathFound = true;
+    localPosVisited.push(start);
     console.log(`Our path was:`);
-    console.log(positionsVisited);
-    console.log(`Which was reached in ${positionsVisited.length} steps`);
+    console.log(localPosVisited);
+    console.log(`Which was reached in ${localPosVisited.length - 1} steps`);
+    console.log("This is the shortest pathway possible");
+    possiblePathways.push(localPosVisited);
     return;
   }
 
   // Add the current position to the local visited positions
   localPosVisited.push(start);
 
-  // recursive case
   let validMoves = returnValidMoves(start, localPosVisited);
 
   // If, within the list of valid moves we find our end destination, recall the function to reach the base case
   for (let move of validMoves) {
     if (move[0] === end[0] && move[1] === end[1]) {
-      console.log(`     ||| Found endpoint in next move! ||| `);
-      moveKnight([move[0], move[1]], end, localPosVisited);
-      return;
+      return moveKnight([move[0], move[1]], end, localPosVisited);
     }
   }
   // Otherwise, for each valid move of valid moves recall moveKnight
   for (let move of validMoves) {
-    console.log(`Didn't find next move in list of valid moves`);
-    console.log(
-      `Running moveKnight again with start: ${[
-        move[0],
-        move[1],
-      ]} | localPosVisited: ${localPosVisited}`
-    );
     moveKnight([move[0], move[1]], end, localPosVisited);
   }
+  return;
 }
 
-moveKnight([0, 0], [3, 3]);
+moveKnight([7, 7], [0, 0]);
