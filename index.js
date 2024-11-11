@@ -1,3 +1,5 @@
+let cycles = 0;
+
 function returnValidMoves(currentPosition, previousPositions = []) {
   let [x, y] = currentPosition;
   let validMoves = filterMoves(
@@ -65,10 +67,19 @@ function knightMoves(start, end) {
   let visited = [];
 
   while (queue.length > 0) {
+    // cycles += 1;
+    // if (cycles > 5) return;
     let [curPos, path] = queue.shift();
+    console.log("curPos is -----");
+    console.log(curPos);
+    console.log("path is -----");
+    console.log(path);
 
     if (curPos[0] === end[0] && curPos[1] === end[1]) {
-      console.log("We made it!");
+      console.log(`You made it in ${path.length} moves!`);
+      console.log(`⬇️  Here's your path  ⬇️`);
+      console.log(path);
+      return;
     }
 
     // Mark the current position as visited
@@ -78,60 +89,43 @@ function knightMoves(start, end) {
     let validMoves = returnValidMoves(curPos);
 
     // Filter valid moves to exclude positions already visited
-    validMoves.filter((move) => {
-      for (let pos of visited) {
-        if (move[0] === pos[0] && move[1] === pos[1]) {
-          return true;
+    validMoves = validMoves.filter((move) => {
+      console.log(
+        `Running the .filter method on validMoves, feeding: ${move} as the property`
+      );
+      console.log(move);
+      for (let item of visited) {
+        let visitedEdges = item[1];
+        for (let edge of visitedEdges) {
+          if (edge[0] === move[0] && edge[1] === move[1]) {
+            console.log(
+              "Found an edge in visited edges matching a move in validMoves"
+            );
+            return false;
+          } else {
+            return true;
+          }
         }
       }
     });
+
+    console.log(`valid moves from ${curPos} are -----`);
+    console.log(validMoves);
+
     for (let move of validMoves) {
-      queue.push([move, [path].push[move]]);
-      console.log(queue);
+      let newPath = path.slice();
+      console.log(" *** This is what I want to push to newPath");
+      console.log([move[0], move[1]]);
+      console.log("#### Now pushing to newPath! #####");
+      newPath.push(move);
+      console.log("-- This is how newPath looks after we push to it --");
+      console.log(newPath);
+      let vertex = [move, newPath];
+      console.log("HERE IS THE VERTEX WE PUSH TO QUEUE");
+      console.log(vertex[0], vertex[1]);
+      queue.push(vertex);
     }
   }
 }
 
-// function moveKnight(start, end, positionsVisited = []) {
-//   if (shortestPathFound) return;
-//   let localPosVisited = positionsVisited.slice();
-//   // Add the current position to the local visited positions
-//   localPosVisited.push(start);
-//   // Collect array of valid moves from current position
-//   let validMoves = returnValidMoves(start, localPosVisited);
-
-//   for (let pathway of possiblePathways) {
-//     if (pathway && pathway.length < positionsVisited.length) {
-//       return;
-//     }
-//   }
-
-//   // Base case
-//   if (start[0] === end[0] && start[1] === end[1]) {
-//     shortestPathFound = true;
-//     console.log(`Our path was:`);
-//     console.log(localPosVisited);
-//     console.log(`Which was reached in ${localPosVisited.length - 1} steps`);
-//     console.log("This is the shortest pathway possible");
-//     possiblePathways.push(localPosVisited);
-//     return;
-//   }
-
-//   // Recursion case
-//   // If we find the end vertex in the list of valid moves move knight to it.
-//   for (let move of validMoves) {
-//     if (move[0] === end[0] && move[1] === end[1]) {
-//       return moveKnight([move[0], move[1]], end, localPosVisited);
-//     }
-//   }
-//   //
-
-//   // Otherwise, for each valid move of valid moves recall moveKnight
-//   for (let move of validMoves) {
-//     moveKnight([move[0], move[1]], end, localPosVisited);
-//   }
-//   return;
-// }
-
-// moveKnight([5, 5], [5, 6]); - Should be 3 steps
-knightMoves([3, 3], [5, 5]);
+knightMoves([2, 2], [6, 4]);
